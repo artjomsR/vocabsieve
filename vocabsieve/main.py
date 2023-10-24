@@ -211,6 +211,10 @@ class DictionaryWindow(QMainWindow):
             self.play_audio(x.text()[2:]) if x is not None else None
         ))
 
+        self.audio_selector.itemDoubleClicked.connect(lambda x: (
+            self.play_audio(x.text()[2:]) if x is not None else None
+        ))
+
         self.definition.setReadOnly(
             not (
                 self.settings.value(
