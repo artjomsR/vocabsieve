@@ -48,7 +48,7 @@ class MainWindowBase(QMainWindow):
         self.initWidgets()
 
         self.resize(500, 800)
-        self.setupWidgetsV() 
+        self.setupWidgetsV()
 
     def scaleFont(self) -> None:
         font = QApplication.font()
@@ -81,7 +81,7 @@ class MainWindowBase(QMainWindow):
             "Look up a word by double clicking it. Or, select it"
             ", then press \"Get definition\".")
 
-        self.lookup_button = QPushButton(f"Define [{MOD}+D]") 
+        self.lookup_button = QPushButton(f"Define [{MOD}+D]")
         self.lookup_exact_button = QPushButton(f"Define direct [Shift-{MOD}+D]")
         self.lookup_exact_button.setToolTip(
             "This will look up the word without lemmatization.")
@@ -103,7 +103,7 @@ class MainWindowBase(QMainWindow):
         self.lookup_definition_on_doubleclick = QCheckBox(
             "Lookup definition on double click")
         self.lookup_definition_on_doubleclick.setToolTip(
-            "Disable this if you want to use 3rd party dictionaries with copied text (e.g. with mpvacious).")
+            "Disable this if you want to use 3rd party dictionaries with copied text (e.g. with mpvacious).[Ctrl+2]")
         self.lookup_definition_on_doubleclick.clicked.connect(lambda v: self.settings.setValue("lookup_definition_on_doubleclick", v))
         self.lookup_definition_on_doubleclick.setChecked(self.settings.value("lookup_definition_on_doubleclick", True, type=bool))
 
@@ -114,7 +114,7 @@ class MainWindowBase(QMainWindow):
         self.freq_widget.setPlaceholderText("Word frequency")
 
         self.audio_selector = AudioSelector(self.settings)
-        
+
         self.definition.setReadOnly(
             not (
                 self.settings.value(
@@ -158,12 +158,12 @@ class MainWindowBase(QMainWindow):
         layout.addWidget(self.image_viewer, 0, 2, 4, 1)
         layout.addWidget(self.sentence, 4, 0, 1, 3)
         layout.setRowStretch(4, 1)
-        
+
 
         layout.addWidget(self.word, 5, 0)
         layout.addWidget(self.freq_widget, 5, 1)
         layout.addWidget(self.word_record_display, 5, 2)
-        
+
         layout.setRowStretch(6, 2)
         layout.setRowStretch(8, 2)
         if self.settings.value("sg2_enabled", False, type=bool):
@@ -184,7 +184,7 @@ class MainWindowBase(QMainWindow):
         layout.setColumnStretch(2, 5)
         self._layout = layout
 
-    
+
 
     def onHelp(self) -> None:
         url = f"https://docs.freelanguagetools.org/"
@@ -198,7 +198,7 @@ class MainWindowBase(QMainWindow):
         self.logview = LogView()
         self.logview.exec_()
 
-    
+
     def getAnkiSettings(self) -> AnkiSettings:
         return AnkiSettings(
             deck=self.settings.value("deck_name", "Default"),
@@ -222,8 +222,3 @@ class MainWindowBase(QMainWindow):
             threshold=self.settings.value("tracking/known_threshold", 100, type=int),
             threshold_cognate=self.settings.value("tracking/known_threshold_cognate", 25, type=int)
         )
-
-
-
-
-    

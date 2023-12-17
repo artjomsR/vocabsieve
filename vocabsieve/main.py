@@ -31,7 +31,7 @@ from .contentmanager import ContentManager
 from .global_events import GlobalObject
 from .tools import compute_word_score, is_json, make_audio_source_group, prepareAnkiNoteDict, is_oneword, addNote, make_source_group, getVersion, make_freq_source
 from .ui.main_window_base import MainWindowBase
-from .models import (DictionarySourceGroup, KnownMetadata, LookupRecord, SRSNote, TrackingDataError, 
+from .models import (DictionarySourceGroup, KnownMetadata, LookupRecord, SRSNote, TrackingDataError,
                      WordRecord)
 from sentence_splitter import SentenceSplitter
 from .lemmatizer import lem_word
@@ -71,7 +71,7 @@ class MainWindow(MainWindowBase):
 
     def setupClipboardMonitor(self):
         GlobalObject().addEventListener("double clicked", self.lookupSelected)
-        cant_listen_to_clipboard = (os.environ.get("XDG_SESSION_TYPE") == "wayland" 
+        cant_listen_to_clipboard = (os.environ.get("XDG_SESSION_TYPE") == "wayland"
                                     or platform.system() == "Darwin")
         if self.settings.value("primary", False, type=bool)\
                 and QClipboard.supportsSelection(QApplication.clipboard())\
@@ -137,7 +137,7 @@ class MainWindow(MainWindowBase):
         else:
             logger.debug("Source Group 2 is disabled, emptying source widget.")
             self.sg2 = DictionarySourceGroup([])
-            self.definition2.setSourceGroup(self.sg2) 
+            self.definition2.setSourceGroup(self.sg2)
 
         if audio_src_list:=json.loads(self.settings.value("audio_sg", '["Forvo"]')):
             self.audio_sg = make_audio_source_group(audio_src_list, self.dictdb)
@@ -185,7 +185,7 @@ class MainWindow(MainWindowBase):
             )
             if answer2 == QMessageBox.Open:
                 QDesktopServices.openUrl(QUrl(current['html_url']))
-        
+
 
     def setupButtons(self) -> None:
         self.lookup_button.clicked.connect(self.lookupSelected)
@@ -281,7 +281,7 @@ class MainWindow(MainWindowBase):
         self.setMenuBar(self.menu)
 
 
-        
+
 
     def onAnalyzeBook(self):
         if self.checkAnkiConnect() and self.known_data is not None:
@@ -318,7 +318,7 @@ class MainWindow(MainWindowBase):
             return known_words, known_cognates
         else:
             return [], []
-            
+
 
     def exportKnownWords(self):
         path, _ = QFileDialog.getSaveFileName(
@@ -371,9 +371,9 @@ class MainWindow(MainWindowBase):
             self.known_data_timestamp = time.time()
         finally:
             lock.release()
- 
 
-    
+
+
     def exportWordData(self):
         path, _ = QFileDialog.getSaveFileName(
             self,
@@ -401,14 +401,14 @@ class MainWindow(MainWindowBase):
             stats_window.open()
         elif self.known_data is None:
             self.warnKnownDataNotReady()
-            
+
     def warnKnownDataNotReady(self):
         QMessageBox.warning(
             self,
             "Known data is not ready",
             "Known data is not ready yet. Please try again in a few seconds, and make sure AnkiConnect is available if Anki support is enabled."
         )
-        
+
 
 
     def exportNotes(self) -> None:
@@ -557,11 +557,13 @@ class MainWindow(MainWindowBase):
             self.settings.setValue("last_import_path", "")
             QMessageBox.warning(self, "You have not imported notes before",
                 "Use any one of the other two options on the menu, and you will be able to use this one next time.")
- 
+
 
     def setupShortcuts(self) -> None:
         self.shortcut_toanki = QShortcut(QKeySequence('Ctrl+S'), self)
         self.shortcut_toanki.activated.connect(self.toanki_button.animateClick)
+        self.shortcut_double_click_toggle = QShortcut(QKeySequence('Ctrl+2'), self)
+        self.shortcut_double_click_toggle.activated.connect(self.lookup_definition_on_doubleclick.animateClick)
         self.shortcut_getdef_e = QShortcut(QKeySequence('Ctrl+Shift+D'), self)
         self.shortcut_getdef_e.activated.connect(self.lookup_exact_button.animateClick)
         self.shortcut_getdef = QShortcut(QKeySequence('Ctrl+D'), self)
@@ -613,7 +615,7 @@ class MainWindow(MainWindowBase):
         if target: # If word not empty
             logger.info(f"Triggered lookup on {target}")
             self.lookup(target, no_lemma)
-    
+
     def lookup(self, target: str, no_lemma=False) -> None:
         self.boldWordInSentence(target)
         langcode = self.settings.value("target_language", "en")
@@ -628,7 +630,7 @@ class MainWindow(MainWindowBase):
             )
             if self.known_data:
                 word_record = self.known_data.get(
-                    lemma, 
+                    lemma,
                     WordRecord(lemma=lemma, language=langcode)
                     )
                 self.word_record_display.setWordRecord(word_record, self.getWordActionWeights())
@@ -639,7 +641,7 @@ class MainWindow(MainWindowBase):
 
             self.audio_selector.lookup(target)
             self.freq_widget.lookup(target)
-        
+
 
     def setSentence(self, content) -> None:
         self.sentence.setText(str.strip(content))
@@ -696,7 +698,7 @@ class MainWindow(MainWindowBase):
                     or self.definition2.hasFocus())
                     # Allow pasting right after focus for wayland users
                     # because wayland doesn't allow pasting from inactive windows
-        
+
         if is_focused and not even_when_focused:
             return
         if is_json(text):
@@ -741,7 +743,7 @@ class MainWindow(MainWindowBase):
             self.sentence.setHtml(sentence_text)
 
         QCoreApplication.processEvents()
-        
+
 
     def getLanguage(self) -> str:
         return self.settings.value("target_language", "en")  # type: ignore
@@ -768,10 +770,10 @@ class MainWindow(MainWindowBase):
             tags=self.settings.value("tags", "vocabsieve").strip().split() + self.tags.text().strip().split()
         )
 
-        
+
         content = prepareAnkiNoteDict(anki_settings, note)
         logger.debug("Prepared Anki note json" + json.dumps(content, indent=4, ensure_ascii=False))
-        try: 
+        try:
             addNote(
                 self.settings.value("anki_api", "http://127.0.0.1:8765"),
                 content
