@@ -85,6 +85,9 @@ class GenericImporter(QDialog):
             self.src_checkboxes = []
             self.src_selector._layout = QVBoxLayout(self.src_selector)  # type: ignore
             self._layout.addRow(QLabel("<h3>Select books to extract highlights from</h3>"))
+            self.select_all_checkbox = QCheckBox("Select All")
+            self.src_selector._layout.insertWidget(0, self.select_all_checkbox)  # type: ignore
+            self.select_all_checkbox.clicked.connect(self.toggleAllCheckboxes)
             for book_name in set(self.orig_book_names):
                 self.src_checkboxes.append(
                     QCheckBox(truncate_middle(book_name, 90)))
@@ -103,6 +106,11 @@ class GenericImporter(QDialog):
         self._layout.addRow(QLabel("Preview cards"), self.preview_widget)
         self._layout.addRow(self.progressbar)
         self._layout.addRow(self.definition_count_label, self.anki_button)
+
+    def toggleAllCheckboxes(self, is_checked):
+        for checkbox in self.src_checkboxes:
+            checkbox.setChecked(is_checked)
+        self.updateHighlightCount()
 
     def getNotes(self) -> list[ReadingNote]:
         """
